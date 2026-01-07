@@ -75,7 +75,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: sudo apt-get install -y flex bison
+      run: sudo apt-get install -y flex bison libfl-dev
 
     - name: Generate lexer and parser
       run: |
@@ -84,7 +84,7 @@ jobs:
 
     - name: Build dealer
       run: |
-        cc -Wno-implicit-function-declaration -Wno-deprecated-non-prototype -Wno-implicit-int -o dealer dealer.c pbn.c c4.c getopt.c pointcount.c __random.c rand.c srand.c y.tab.c -lfl
+        cc -fcommon -Wno-implicit-function-declaration -Wno-implicit-int -o dealer dealer.c pbn.c c4.c getopt.c pointcount.c __random.c rand.c srand.c y.tab.c -lfl
 
     - name: Test dealer
       run: |
