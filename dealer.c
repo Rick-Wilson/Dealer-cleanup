@@ -291,7 +291,7 @@ int true_dd (deal d, int l, int c) {
 #ifdef MSDOS
     /* Ugly fix for MSDOS. Requires a file called in.txt and will create the
        files tst.pbn and out.txt. Note that we need not user crlf here, as it's
-       only dealer that will read the files anyway, Micke Hovmöller 990310 */
+       only dealer that will read the files anyway, Micke Hovmï¿½ller 990310 */
     FILE *f;
     char tn1[] = "tst.pbn";
     char tn2[] = "out.txt";
@@ -302,7 +302,7 @@ int true_dd (deal d, int l, int c) {
     fprintcompact (f, d, 0);
     /* Write the player to lead and strain. Note that since the player to lead
        sits _behind_ declarer, the array is "eswn" instead of "nesw".
-       /Micke Hovmöller 990312 */
+       /Micke Hovmï¿½ller 990312 */
     fprintf (f, "%c %c\n", "eswn"[l], "cdhsn"[c]);
     fclose (f);
 
@@ -1559,10 +1559,11 @@ int main (int argc, char **argv) {
   struct timeval tvstart, tvstop;
 
   verbose = 1;
+  verbose_on = 0;
 
   gettimeofday (&tvstart, (void *) 0);
 
-  while ((c = getopt (argc, argv, "023ehuvmqp:g:s:l:V")) != -1) {
+  while ((c = getopt (argc, argv, "023ehuvmqXp:g:s:l:V")) != -1) {
     switch (c) {
       case '0':
       case '2':
@@ -1595,7 +1596,7 @@ int main (int argc, char **argv) {
         seed_provided = 1;
         seed = atol (optarg);
         if (seed == LONG_MIN || seed == LONG_MAX) {
-            fprintf (stderr, "Seed overflow: seed must be between %ld and %ld\n", 
+            fprintf (stderr, "Seed overflow: seed must be between %ld and %ld\n",
               LONG_MIN, LONG_MAX);
             exit (-1);
         }
@@ -1615,6 +1616,10 @@ int main (int argc, char **argv) {
         printf ("$Date: 2003/08/05 19:53:04 $\n");
         printf ("$Author: henk $\n");
         return 1;
+      case 'X': /* force verbose stats on */
+        verbose = 1;
+        verbose_on = 1;
+        break;
       case '?':
       case 'h':
         errflg = 1;
@@ -1622,7 +1627,7 @@ int main (int argc, char **argv) {
       }
     }
   if (argc - optind > 2 || errflg) {
-    fprintf (stderr, "Usage: %s [-023ehuvmqV] [-p n] [-g n] [-s seed] [-l n] [inputfile]\n", argv[0]);
+    fprintf (stderr, "Usage: %s [-023ehuvmqXV] [-p n] [-g n] [-s seed] [-l n] [inputfile]\n", argv[0]);
     exit (-1);
   }
   if (optind < argc && freopen (input_file = argv[optind], "r", stdin) == NULL) {

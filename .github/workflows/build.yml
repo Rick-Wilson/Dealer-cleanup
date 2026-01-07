@@ -1,0 +1,97 @@
+name: Build Dealer
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install winflexbison
+      run: |
+        choco install winflexbison3 -y
+
+    - name: Add winflexbison to PATH
+      run: echo "C:\ProgramData\chocolatey\lib\winflexbison3\tools" >> $env:GITHUB_PATH
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Generate lexer and parser
+      run: |
+        win_flex -o scan.c scan.l
+        win_bison -o y.tab.c -d defs.y
+
+    - name: Build dealer.exe
+      run: |
+        cl /DWIN32 /Fe:dealer.exe dealer.c pbn.c c4.c getopt.c pointcount.c __random.c rand.c srand.c y.tab.c ws2_32.lib
+
+    - name: Test dealer.exe
+      run: |
+        echo "hcp(north) >= 20" | .\dealer.exe -p 1 -s 1
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dealer-windows
+        path: dealer.exe
+
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Generate lexer and parser
+      run: |
+        flex -o scan.c scan.l
+        bison -o y.tab.c -d defs.y
+
+    - name: Build dealer
+      run: |
+        cc -Wno-implicit-function-declaration -Wno-deprecated-non-prototype -Wno-implicit-int -o dealer dealer.c pbn.c c4.c getopt.c pointcount.c __random.c rand.c srand.c y.tab.c -ll
+
+    - name: Test dealer
+      run: |
+        echo "hcp(north) >= 20" | ./dealer -p 1 -s 1
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dealer-macos
+        path: dealer
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get install -y flex bison
+
+    - name: Generate lexer and parser
+      run: |
+        flex -o scan.c scan.l
+        bison -o y.tab.c -d defs.y
+
+    - name: Build dealer
+      run: |
+        cc -Wno-implicit-function-declaration -Wno-deprecated-non-prototype -Wno-implicit-int -o dealer dealer.c pbn.c c4.c getopt.c pointcount.c __random.c rand.c srand.c y.tab.c -lfl
+
+    - name: Test dealer
+      run: |
+        echo "hcp(north) >= 20" | ./dealer -p 1 -s 1
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dealer-linux
+        path: dealer

@@ -23,13 +23,17 @@ int printpbn (int board, deal d) {
   int board_vul[] = { 0,1,2,3, 1,2,3,0, 2,3,0,1, 3,0,1,2 };
 
   /* Local variables */
+  static int first_call = 1;
   time_t timet;
   size_t len;
   char timearray[12];
   int player, suit, rank;
 
-  /* Suppress verbose output unless we really want it */
-  verbose ^= 1;
+  /* Suppress verbose output on first PBN row only (unless verbose_on is set) */
+  if (first_call && !verbose_on) {
+    verbose = 0;
+    first_call = 0;
+  }
 
   printf ("[Event \"Hand simulated by dealer with file %s, seed %lu\"]\n",
   input_file, seed);

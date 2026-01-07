@@ -8,6 +8,7 @@ typedef card deal[52];
 static char *player_name[] = { "North", "East", "South", "West" };
 
 int verbose;
+int verbose_on;  /* if set, verbose cannot be turned off */
 
 /* Changes for cccc and quality */
 struct context {

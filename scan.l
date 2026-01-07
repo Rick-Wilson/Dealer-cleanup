@@ -1,4 +1,5 @@
 /* $Header: /home/henk/CVS/dealer/scan.l,v 1.8 1999/07/05 19:44:30 henk Exp $ */
+%x COMMENT
 %%
 "&&"            return(AND2);
 and             return(AND2);
@@ -21,8 +22,8 @@ not             return(NOT);
 ":"             return(COLON);
 "//".*\n        {lino++;}
 "/*"            BEGIN(COMMENT);
-<COMMENT>[^*\n<<EOF>>]*
-<COMMENT>"*"+[^*/\n<<EOF>]*
+<COMMENT>[^*\n]*
+<COMMENT>"*"+[^*/\n]*
 <COMMENT>\n     lino++;
 <COMMENT><<EOF>> yyerror("EOF found in comment");
 <COMMENT>"*"+"/" BEGIN(INITIAL);
