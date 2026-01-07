@@ -1,9 +1,16 @@
-*.obj
-scan.c
-lex.yy.c
-y.tab.h
-y.tab.c
-defs.tab.c
+# macOS
+.DS_Store
 
-win_bison.exe
-win_flex.exe
+# Build artifacts
+dealer
+*.o
+*.dSYM/
+
+# Generated parser files (from flex/bison)
+scan.c
+y.tab.c
+y.tab.h
+
+# Editor files
+*.swp
+*~
